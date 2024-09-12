@@ -31,7 +31,8 @@ setup(
     ],
     package_data={
         'package_name': [
-            '',
+            '*',
+            '**/*',
         ],
     },
 )
