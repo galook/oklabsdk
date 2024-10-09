@@ -1,28 +1,59 @@
 #!/bin/bash
 
-if command -v gsed >/dev/null 2>&1; then
-  sed_cmd="gsed"
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Set sed command based on availability
+if command_exists gsed; then
+    sed_cmd="gsed"
 else
-  sed_cmd="sed"
+    sed_cmd="sed"
 fi
 
-read -ep "Package name: " PACKAGE
-read -ep "Package description: " DESCRIPTION
-read -ep "Package URL: " URL
-echo $URL
-read -ep "Author name [Rodrigo Martínez (brunneis)]: " AUTHOR
-AUTHOR=${AUTHOR:-"Rodrigo Martínez (brunneis)"}
+# Function to prompt for input with default value
+prompt_with_default() {
+    local prompt="$1"
+    local default="$2"
+    local input
 
-read -ep "Author email [dev@brunneis.com]: " EMAIL
-EMAIL=${EMAIL:-"dev@brunneis.com"}
+    if [ -z "$default" ]; then
+        read -ep "${prompt}: " input
+    else
+        read -ep "${prompt} [${default}]: " input
+    fi
+    echo "${input:-$default}"
+}
 
-$sed_cmd -i "s~package_name~$PACKAGE~" package_name/__init__.py 
-mv package_name/package_name.py package_name/$PACKAGE.py
-mv package_name $PACKAGE
-$sed_cmd -i "s~package_name~$PACKAGE~g" setup.py
-$sed_cmd -i "s~description_value~$DESCRIPTION~g" setup.py
-$sed_cmd -i "s~url_value~$URL~g" setup.py
-$sed_cmd -i "s~author_value~$AUTHOR~g" setup.py
-$sed_cmd -i "s~email_value~$EMAIL~g" setup.py
+# Prompt for package information
+PACKAGE=$(prompt_with_default "Package name" "")
+DESCRIPTION=$(prompt_with_default "Package description" "")
+URL=$(prompt_with_default "Package URL" "")
+AUTHOR=$(prompt_with_default "Author name" "Rodrigo Martínez (brunneis)")
+EMAIL=$(prompt_with_default "Author email" "dev@brunneis.com")
 
-rm rename.sh
+# Function to perform sed replacement
+sed_replace() {
+    local pattern="$1"
+    local replacement="$2"
+    local file="$3"
+    $sed_cmd -i "s~${pattern}~${replacement}~g" "$file"
+}
+
+# Update files
+sed_replace "package_name" "$PACKAGE" "package_name/__init__.py"
+mv "package_name/package_name.py" "package_name/${PACKAGE}.py"
+mv "package_name" "$PACKAGE"
+
+# Update pyproject.toml
+sed_replace "package_name" "$PACKAGE" "pyproject.toml"
+sed_replace "description_value" "$DESCRIPTION" "pyproject.toml"
+sed_replace "url_value" "$URL" "pyproject.toml"
+sed_replace "author_value" "$AUTHOR" "pyproject.toml"
+sed_replace "email@example.com" "$EMAIL" "pyproject.toml"
+
+# Clean up
+rm "rename.sh"
+
+echo "Package renaming completed successfully."
