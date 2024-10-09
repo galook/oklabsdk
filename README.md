@@ -13,7 +13,7 @@ making it easier to set up and distribute your Python projects.
 ## Usage
 To use this boilerplate for your new Python package:
 ```
-git clone https://github.com/brunneis/python-package
+git clone https://github.com/labteral/python-package
 cd python-package
 ./rename.sh
 ```
