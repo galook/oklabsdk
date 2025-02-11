@@ -3,11 +3,11 @@ requires = ['setuptools>=64.0.0', 'build']
 build-backend = 'setuptools.build_meta'
 
 [project]
-name = 'package_name'
-dynamic = ['version']
-description = 'description_value'
+name = 'oklabsdk'
+dynamic = ['version', 'readme']
+description = 'OKLab Software Development Kit'
 authors = [
-    { name = 'author_value', email = 'email@example.com' },
+    { name = 'Matej Holubec', email = 'holubec@oksystem.cz' },
 ]
 license = { text = 'GNU General Public License v3 (GPLv3)' }
 classifiers = [
@@ -22,17 +22,19 @@ classifiers = [
 ]
 requires-python = '>=3.10'
 dependencies = [
-    # Add your dependencies here
+    'python-dotenv',
+    'requests',
+    'pdf2image'
 ]
 
 [project.urls]
-Homepage = 'url_value'
+url = 'https://oksystem.cz'
 
 [tool.setuptools.packages.find]
-include = ['package_name']
+include = ['oklabsdk']
 
 [tool.setuptools.package-data]
-'package_name' = ['*', '**/*', '!**/__pycache__']
+'oklabsdk' = ['*', '**/*', '!**/__pycache__']
 
 [tool.setuptools.dynamic]
-version = {attr = 'package_name.version.__version__'}
+version = {attr = 'oklabsdk.version.__version__'}
