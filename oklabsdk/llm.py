@@ -32,15 +32,16 @@ def get_response(prompt, max_tokens=4096, system_message=None, seed=None):
     
     if(system_message):
         messages.insert(0, {"role": "system", "content": system_message})
-    return (
-        (
-            model.chat.completions.create(
+
+    completion = model.chat.completions.create(
                 model="gpt-4o",
                 max_tokens=max_tokens,
                 messages=messages,
                 seed=seed
             )
-        )
+    # print(f"Usage statistics: {completion.usage}")
+    return (
+        completion
         .choices[0]
         .message.content
     )
@@ -110,6 +111,6 @@ def progress_bar(current, total):
 
 if __name__ == "__main__":
     initConfigFromEnv()
-    filename = "H_Pracovni_zarazeni.pdf"
+    filename = "H_Pracovnepravni_vztahy.pdf"
     pdftomd(filename)
-    describe_all_images(filename + ".output.md")
+    describe_all_images(filename + ".md")
